@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { Leetcode, Github, TUF, TrophyIcon } from './Icons';
-import { profile, dsaTopics, tufStats } from '../data/portfolio';
+import { profile, dsaTopics, tufStats as initialTufStats } from '../data/portfolio';
 import './ProblemSolving.css';
 
 const STROKE = 201.1;
@@ -15,49 +15,50 @@ const defaultStats = {
   ],
 };
 
-const getTufCalendarData = () => {
+const getTufCalendarData = (submissionsMap = {}) => {
   const today = new Date();
   
   const startDate = new Date();
   startDate.setDate(today.getDate() - 364);
   
-  const activeMonths = [11, 0, 1, 4, 5, 6]; // Dec, Jan, Feb, May, Jun, Jul
-  
-  let seed = 42;
-  const random = () => {
-    const x = Math.sin(seed++) * 10000;
-    return x - Math.floor(x);
-  };
-  
-  const eligibleDays = [];
-  let tempDate = new Date(startDate);
-  while (tempDate <= today) {
-    const month = tempDate.getMonth();
-    if (activeMonths.includes(month)) {
-      eligibleDays.push(tempDate.toISOString().split('T')[0]);
+  const hasRealData = submissionsMap && Object.keys(submissionsMap).length > 0;
+
+  let fallbackMap = {};
+  if (!hasRealData) {
+    const activeMonths = [11, 0, 1, 4, 5, 6];
+    let seed = 42;
+    const random = () => {
+      const x = Math.sin(seed++) * 10000;
+      return x - Math.floor(x);
+    };
+    const eligibleDays = [];
+    let tempDate = new Date(startDate);
+    while (tempDate <= today) {
+      const month = tempDate.getMonth();
+      if (activeMonths.includes(month)) {
+        eligibleDays.push(tempDate.toISOString().split('T')[0]);
+      }
+      tempDate.setDate(tempDate.getDate() + 1);
     }
-    tempDate.setDate(tempDate.getDate() + 1);
+    const activeDaysSet = new Set();
+    while (activeDaysSet.size < Math.min(48, eligibleDays.length)) {
+      const index = Math.floor(random() * eligibleDays.length);
+      activeDaysSet.add(eligibleDays[index]);
+    }
+    activeDaysSet.forEach(day => {
+      fallbackMap[day] = 1;
+    });
+    let remainingSubmissions = 108 - activeDaysSet.size;
+    const activeDaysArray = Array.from(activeDaysSet);
+    while (remainingSubmissions > 0) {
+      const index = Math.floor(random() * activeDaysArray.length);
+      fallbackMap[activeDaysArray[index]] += 1;
+      remainingSubmissions -= 1;
+    }
   }
-  
-  const activeDaysSet = new Set();
-  while (activeDaysSet.size < Math.min(41, eligibleDays.length)) {
-    const index = Math.floor(random() * eligibleDays.length);
-    activeDaysSet.add(eligibleDays[index]);
-  }
-  
-  const submissionsMap = {};
-  activeDaysSet.forEach(day => {
-    submissionsMap[day] = 1;
-  });
-  
-  let remainingSubmissions = 95 - activeDaysSet.size;
-  const activeDaysArray = Array.from(activeDaysSet);
-  while (remainingSubmissions > 0) {
-    const index = Math.floor(random() * activeDaysArray.length);
-    submissionsMap[activeDaysArray[index]] += 1;
-    remainingSubmissions -= 1;
-  }
-  
+
+  const mapToUse = hasRealData ? submissionsMap : fallbackMap;
+
   const startDayOfWeek = startDate.getDay();
   const gridStartDate = new Date(startDate);
   gridStartDate.setDate(startDate.getDate() - startDayOfWeek);
@@ -76,7 +77,7 @@ const getTufCalendarData = () => {
     const year = datePtr.getFullYear();
     const formattedDate = `${day}-${month}-${year}`;
     
-    const count = submissionsMap[dateStr] || 0;
+    const count = mapToUse[dateStr] || 0;
     const isFirstDayOfMonth = datePtr.getDate() <= 7 && datePtr.getDay() === 0;
     const monthLabel = isFirstDayOfMonth ? datePtr.toLocaleString('default', { month: 'short' }) : '';
     
@@ -111,13 +112,28 @@ const ProblemSolving = () => {
     }
   });
 
+  const [tufData, setTufData] = useState(() => {
+    try {
+      const cached = localStorage.getItem('portfolio_tuf_live_stats');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.tufProfile && parsed.tufProfile.solved >= 100) {
+          return parsed;
+        }
+      }
+      return { ...initialTufStats, submissionsMap: {} };
+    } catch {
+      return { ...initialTufStats, submissionsMap: {} };
+    }
+  });
+
+  // Fetch LeetCode Stats
   useEffect(() => {
     const fetchLC = async () => {
       try {
         let total = 0, easy = 0, medium = 0, hard = 0;
         let success = false;
 
-        // Try primary LeetCode API
         try {
           const res = await fetch('https://leetcode-api-faisalshohag.vercel.app/Akashyatinjain');
           if (res.ok) {
@@ -134,7 +150,6 @@ const ProblemSolving = () => {
           /* try fallback */
         }
 
-        // Secondary fallback API
         if (!success) {
           try {
             const res = await fetch('https://alfa-leetcode-api.onrender.com/Akashyatinjain/solved');
@@ -153,7 +168,6 @@ const ProblemSolving = () => {
           }
         }
 
-        // Tertiary fallback API
         if (!success) {
           try {
             const res = await fetch('https://leetcode-stats-api.herokuapp.com/Akashyatinjain');
@@ -191,8 +205,148 @@ const ProblemSolving = () => {
     fetchLC();
   }, []);
 
-  // Prepare TUF calendar data
-  const tufCells = getTufCalendarData();
+  // Fetch Live TakeUForward (Striver) Stats automatically
+  useEffect(() => {
+    const fetchTUF = async () => {
+      try {
+        let progressData = null;
+
+        // Try serverless API proxy endpoint first, then direct / Vite proxy
+        const progUrls = [
+          '/api/tuf?endpoint=progress',
+          '/api/tuf/progress/dsa/Akashyatinjain',
+          'https://backend-go.takeuforward.org/api/v1/progress/dsa/Akashyatinjain'
+        ];
+
+        for (const url of progUrls) {
+          try {
+            const res = await fetch(url);
+            if (res.ok) {
+              const json = await res.json();
+              if (json && (json.data?.total_solved || json.total_solved)) {
+                progressData = json.data || json;
+                break;
+              }
+            }
+          } catch {
+            /* try next fallback */
+          }
+        }
+
+        // Fetch Heatmaps for current year & previous year
+        const currentYear = new Date().getFullYear();
+        const years = [currentYear - 1, currentYear];
+        let fetchedMap = {};
+
+        for (const yr of years) {
+          const hmUrls = [
+            `/api/tuf?endpoint=heatmap&year=${yr}`,
+            `/api/tuf/streak/heatmap/Akashyatinjain?year=${yr}`,
+            `https://backend-go.takeuforward.org/api/v1/streak/heatmap/Akashyatinjain?year=${yr}`
+          ];
+
+          for (const url of hmUrls) {
+            try {
+              const res = await fetch(url);
+              if (res.ok) {
+                const json = await res.json();
+                if (json && json.success && json.data?.months) {
+                  const monthsObj = json.data.months;
+                  Object.keys(monthsObj).forEach(mStr => {
+                    const monthNum = parseInt(mStr, 10);
+                    const daysObj = monthsObj[mStr];
+                    Object.keys(daysObj).forEach(dStr => {
+                      const dayNum = parseInt(dStr, 10);
+                      const count = daysObj[dStr].total || daysObj[dStr].dsa_sheet_checked || 0;
+                      const dateKey = `${yr}-${String(monthNum).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+                      fetchedMap[dateKey] = count;
+                    });
+                  });
+                  break;
+                }
+              }
+            } catch {
+              /* try next fallback */
+            }
+          }
+        }
+
+        if (progressData || Object.keys(fetchedMap).length > 0) {
+          setTufData(prev => {
+            const totalSolved = progressData?.total_solved ?? prev.tufProfile.solved;
+            const totalDsa = progressData?.total_dsa ?? prev.tufProfile.total;
+            const easyCount = progressData?.easy?.solved ?? prev.tufProfile.categories[0].count;
+            const easyTotal = progressData?.easy?.total ?? prev.tufProfile.categories[0].total;
+            const mediumCount = progressData?.medium?.solved ?? prev.tufProfile.categories[1].count;
+            const mediumTotal = progressData?.medium?.total ?? prev.tufProfile.categories[1].total;
+            const hardCount = progressData?.hard?.solved ?? prev.tufProfile.categories[2].count;
+            const hardTotal = progressData?.hard?.total ?? prev.tufProfile.categories[2].total;
+
+            const mapToCalculate = Object.keys(fetchedMap).length > 0 ? fetchedMap : prev.submissionsMap;
+            const sortedDates = Object.keys(mapToCalculate).sort();
+            const totalSubmissions = Object.values(mapToCalculate).reduce((a, b) => a + b, 0);
+            const activeDays = sortedDates.length;
+
+            let maxStreak = 0;
+            let curStreak = 0;
+            let prevTime = null;
+            sortedDates.forEach(dStr => {
+              const dt = new Date(dStr);
+              if (prevTime !== null) {
+                const diffDays = Math.round((dt - prevTime) / (1000 * 60 * 60 * 24));
+                if (diffDays === 1) curStreak += 1;
+                else curStreak = 1;
+              } else {
+                curStreak = 1;
+              }
+              if (curStreak > maxStreak) maxStreak = curStreak;
+              prevTime = dt;
+            });
+
+            const updated = {
+              ...prev,
+              a2zSheet: {
+                ...prev.a2zSheet,
+                solved: totalSolved,
+                pct: Math.round((totalSolved / prev.a2zSheet.total) * 100),
+                categories: [
+                  { ...prev.a2zSheet.categories[0], count: easyCount },
+                  { ...prev.a2zSheet.categories[1], count: mediumCount },
+                  { ...prev.a2zSheet.categories[2], count: hardCount },
+                ]
+              },
+              tufProfile: {
+                ...prev.tufProfile,
+                solved: totalSolved,
+                total: totalDsa,
+                pct: Math.round((totalSolved / totalDsa) * 100),
+                categories: [
+                  { ...prev.tufProfile.categories[0], count: easyCount, total: easyTotal, pct: Math.round((easyCount / easyTotal) * 100) },
+                  { ...prev.tufProfile.categories[1], count: mediumCount, total: mediumTotal, pct: Math.round((mediumCount / mediumTotal) * 100) },
+                  { ...prev.tufProfile.categories[2], count: hardCount, total: hardTotal, pct: Math.round((hardCount / hardTotal) * 100) },
+                ],
+                activity: {
+                  totalSubmissions: totalSubmissions || prev.tufProfile.activity.totalSubmissions,
+                  activeDays: activeDays || prev.tufProfile.activity.activeDays,
+                  maxStreak: maxStreak || prev.tufProfile.activity.maxStreak,
+                }
+              },
+              submissionsMap: mapToCalculate,
+            };
+
+            localStorage.setItem('portfolio_tuf_live_stats', JSON.stringify(updated));
+            return updated;
+          });
+        }
+      } catch (err) {
+        console.error('Failed to sync TakeUForward stats:', err);
+      }
+    };
+    fetchTUF();
+  }, []);
+
+  // Prepare TUF calendar data using real submission map
+  const tufCells = getTufCalendarData(tufData.submissionsMap);
   const tufWeeks = [];
   for (let i = 0; i < tufCells.length; i += 7) {
     tufWeeks.push(tufCells.slice(i, i + 7));
@@ -202,6 +356,8 @@ const ProblemSolving = () => {
   const lcMedium = stats.categories.find(c => c.label === 'Medium')?.count || 0;
   const lcHard = stats.categories.find(c => c.label === 'Hard')?.count || 0;
   const lcTotal = stats.totalSolved || 0;
+
+  const currentTuf = tufData;
 
   return (
     <section id="leetcode" className="leetcode">
@@ -336,26 +492,26 @@ const ProblemSolving = () => {
                         <tr>
                           <td className="diff-easy">Easy</td>
                           <td>{lcEasy}</td>
-                          <td>{tufStats.a2zSheet.categories.find(c => c.label === 'Easy').count}</td>
-                          <td className="combined-val">{lcEasy + tufStats.a2zSheet.categories.find(c => c.label === 'Easy').count}</td>
+                          <td>{currentTuf.a2zSheet.categories.find(c => c.label === 'Easy')?.count || 0}</td>
+                          <td className="combined-val">{lcEasy + (currentTuf.a2zSheet.categories.find(c => c.label === 'Easy')?.count || 0)}</td>
                         </tr>
                         <tr>
                           <td className="diff-medium">Medium</td>
                           <td>{lcMedium}</td>
-                          <td>{tufStats.a2zSheet.categories.find(c => c.label === 'Medium').count}</td>
-                          <td className="combined-val">{lcMedium + tufStats.a2zSheet.categories.find(c => c.label === 'Medium').count}</td>
+                          <td>{currentTuf.a2zSheet.categories.find(c => c.label === 'Medium')?.count || 0}</td>
+                          <td className="combined-val">{lcMedium + (currentTuf.a2zSheet.categories.find(c => c.label === 'Medium')?.count || 0)}</td>
                         </tr>
                         <tr>
                           <td className="diff-hard">Hard</td>
                           <td>{lcHard}</td>
-                          <td>{tufStats.a2zSheet.categories.find(c => c.label === 'Hard').count}</td>
-                          <td className="combined-val">{lcHard + tufStats.a2zSheet.categories.find(c => c.label === 'Hard').count}</td>
+                          <td>{currentTuf.a2zSheet.categories.find(c => c.label === 'Hard')?.count || 0}</td>
+                          <td className="combined-val">{lcHard + (currentTuf.a2zSheet.categories.find(c => c.label === 'Hard')?.count || 0)}</td>
                         </tr>
                         <tr className="total-row">
                           <td>Total Solved</td>
                           <td>{lcTotal}</td>
-                          <td>{tufStats.a2zSheet.solved}</td>
-                          <td className="combined-total-val">{lcTotal + tufStats.a2zSheet.solved}</td>
+                          <td>{currentTuf.a2zSheet.solved}</td>
+                          <td className="combined-total-val">{lcTotal + currentTuf.a2zSheet.solved}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -376,21 +532,21 @@ const ProblemSolving = () => {
                     <div className="tuf-sheet-header">
                       <div className="tuf-title-badge-row">
                         <TUF size={18} className="tuf-brand-accent-color" />
-                        <span className="tuf-sheet-title">{tufStats.a2zSheet.title}</span>
+                        <span className="tuf-sheet-title">{currentTuf.a2zSheet.title}</span>
                       </div>
-                      <span className="tuf-sheet-numbers">{tufStats.a2zSheet.solved} / {tufStats.a2zSheet.total} Solved</span>
+                      <span className="tuf-sheet-numbers">{currentTuf.a2zSheet.solved} / {currentTuf.a2zSheet.total} Solved</span>
                     </div>
 
                     <div className="tuf-progress-bar-track">
-                      <div className="tuf-progress-bar-fill" style={{ width: `${tufStats.a2zSheet.pct}%` }} />
+                      <div className="tuf-progress-bar-fill" style={{ width: `${currentTuf.a2zSheet.pct}%` }} />
                     </div>
                     <div className="tuf-progress-bar-stats">
-                      <span className="tuf-progress-bar-pct">{tufStats.a2zSheet.pct}% Completed</span>
+                      <span className="tuf-progress-bar-pct">{currentTuf.a2zSheet.pct}% Completed</span>
                       <span className="tuf-progress-bar-desc">Striver's DSA A2Z Roadmap Progress</span>
                     </div>
 
                     <div className="tuf-sheet-categories">
-                      {tufStats.a2zSheet.categories.map((cat) => (
+                      {currentTuf.a2zSheet.categories.map((cat) => (
                         <div key={cat.label} className="tuf-category-item">
                           <span className="tuf-cat-label">{cat.label}</span>
                           <span className="tuf-cat-count" style={{ color: cat.color }}>{cat.count} / {cat.total}</span>
@@ -403,7 +559,7 @@ const ProblemSolving = () => {
                     <p className="leetcode-text">
                       Following the structured DSA path of takeuforward (TUF). Doing these challenges strengthens my core fundamentals in complexity scaling and algorithm designs.
                     </p>
-                    <a href={tufStats.profileUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary leetcode-btn tuf-brand-btn-highlighted">
+                    <a href={currentTuf.profileUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary leetcode-btn tuf-brand-btn-highlighted">
                       <TUF size={16} />
                       View Striver Profile
                       <ArrowUpRight size={14} />
@@ -414,10 +570,10 @@ const ProblemSolving = () => {
                 <div className="leetcode-dials tuf-dials">
                   <div className="tuf-dials-header">
                     <span className="tuf-dials-title">Overall TUF Solved</span>
-                    <span className="tuf-dials-solved-text">{tufStats.tufProfile.solved} / {tufStats.tufProfile.total}</span>
+                    <span className="tuf-dials-solved-text">{currentTuf.tufProfile.solved} / {currentTuf.tufProfile.total}</span>
                   </div>
                   <div className="tuf-dials-list">
-                    {tufStats.tufProfile.categories.map((cat) => {
+                    {currentTuf.tufProfile.categories.map((cat) => {
                       const offset = STROKE - (cat.pct / 100) * STROKE;
                       return (
                         <div key={cat.label} className="dial">
@@ -453,7 +609,7 @@ const ProblemSolving = () => {
                     <TUF size={20} className="github-accent-icon tuf-brand-accent-color" />
                     <div>
                       <span className="chart-title">TUF Submissions Calendar</span>
-                      <span className="chart-subtitle">{tufStats.tufProfile.activity.totalSubmissions} submissions in the last 12 months</span>
+                      <span className="chart-subtitle">{currentTuf.tufProfile.activity.totalSubmissions} submissions in the last 12 months</span>
                     </div>
                   </div>
 
@@ -503,11 +659,11 @@ const ProblemSolving = () => {
                   <div className="tuf-heatmap-legend-row">
                     <div className="tuf-activity-details">
                       <div className="tuf-activity-stat">
-                        <span className="tuf-stat-num">{tufStats.tufProfile.activity.activeDays}</span>
+                        <span className="tuf-stat-num">{currentTuf.tufProfile.activity.activeDays}</span>
                         <span className="tuf-stat-lbl">Active Days</span>
                       </div>
                       <div className="tuf-activity-stat">
-                        <span className="tuf-stat-num">{tufStats.tufProfile.activity.maxStreak}</span>
+                        <span className="tuf-stat-num">{currentTuf.tufProfile.activity.maxStreak}</span>
                         <span className="tuf-stat-lbl">Max Streak</span>
                       </div>
                     </div>

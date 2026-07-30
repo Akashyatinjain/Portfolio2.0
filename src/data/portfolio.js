@@ -312,28 +312,28 @@ export const tufStats = {
   profileUrl: 'https://takeuforward.org/profile/Akashyatinjain',
   a2zSheet: {
     title: "Striver's A2Z Sheet",
-    solved: 121,
+    solved: 125,
     total: 474,
     pct: 26,
     categories: [
-      { label: 'Easy', count: 79, total: 152, color: 'var(--lc-easy)' },
-      { label: 'Medium', count: 35, total: 186, color: 'var(--lc-medium)' },
-      { label: 'Hard', count: 7, total: 136, color: 'var(--lc-hard)' },
+      { label: 'Easy', count: 82, total: 152, color: 'var(--lc-easy)' },
+      { label: 'Medium', count: 31, total: 186, color: 'var(--lc-medium)' },
+      { label: 'Hard', count: 12, total: 136, color: 'var(--lc-hard)' },
     ]
   },
   tufProfile: {
     title: 'TUF Platform Progress',
-    solved: 113,
+    solved: 125,
     total: 1121,
-    pct: 10,
+    pct: 11,
     categories: [
-      { label: 'Easy', count: 78, total: 374, color: 'var(--lc-easy)', pct: 21 },
-      { label: 'Medium', count: 28, total: 477, color: 'var(--lc-medium)', pct: 6 },
-      { label: 'Hard', count: 7, total: 253, color: 'var(--lc-hard)', pct: 3 },
+      { label: 'Easy', count: 82, total: 374, color: 'var(--lc-easy)', pct: 22 },
+      { label: 'Medium', count: 31, total: 477, color: 'var(--lc-medium)', pct: 6 },
+      { label: 'Hard', count: 12, total: 253, color: 'var(--lc-hard)', pct: 5 },
     ],
     activity: {
-      totalSubmissions: 95,
-      activeDays: 41,
+      totalSubmissions: 108,
+      activeDays: 48,
       maxStreak: 6
     }
   }
