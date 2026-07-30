@@ -7,11 +7,11 @@ import './ProblemSolving.css';
 const STROKE = 201.1;
 
 const defaultStats = {
-  totalSolved: 61,
+  totalSolved: 77,
   categories: [
-    { label: 'Easy', count: 35, color: 'var(--lc-easy)', pct: 57 },
-    { label: 'Medium', count: 24, color: 'var(--lc-medium)', pct: 39 },
-    { label: 'Hard', count: 2, color: 'var(--lc-hard)', pct: 8 },
+    { label: 'Easy', count: 39, color: 'var(--lc-easy)', pct: 51 },
+    { label: 'Medium', count: 35, color: 'var(--lc-medium)', pct: 45 },
+    { label: 'Hard', count: 3, color: 'var(--lc-hard)', pct: 4 },
   ],
 };
 
@@ -95,11 +95,17 @@ const getTufCalendarData = () => {
 };
 
 const ProblemSolving = () => {
-  const [activeTab, setActiveTab] = useState('tuf');
+  const [activeTab, setActiveTab] = useState('leetcode');
   const [stats, setStats] = useState(() => {
     try {
       const cached = localStorage.getItem('portfolio_leetcode_stats');
-      return cached ? JSON.parse(cached) : defaultStats;
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.totalSolved && parsed.totalSolved >= 77) {
+          return parsed;
+        }
+      }
+      return defaultStats;
     } catch {
       return defaultStats;
     }
@@ -108,27 +114,76 @@ const ProblemSolving = () => {
   useEffect(() => {
     const fetchLC = async () => {
       try {
-        const res = await fetch(`https://leetcode-stats-api.herokuapp.com/Akashyatinjain`);
-        if (!res.ok) return;
-        const data = await res.json();
-        if (data.status !== "success") return;
-        const total = data.totalSolved || 0;
-        if (total === 0) return;
+        let total = 0, easy = 0, medium = 0, hard = 0;
+        let success = false;
 
-        const easy = data.easySolved || 0;
-        const medium = data.mediumSolved || 0;
-        const hard = data.hardSolved || 0;
+        // Try primary LeetCode API
+        try {
+          const res = await fetch('https://leetcode-api-faisalshohag.vercel.app/Akashyatinjain');
+          if (res.ok) {
+            const data = await res.json();
+            if (data && typeof data.totalSolved === 'number' && data.totalSolved > 0) {
+              total = data.totalSolved;
+              easy = data.easySolved || 0;
+              medium = data.mediumSolved || 0;
+              hard = data.hardSolved || 0;
+              success = true;
+            }
+          }
+        } catch {
+          /* try fallback */
+        }
 
-        const newStats = {
-          totalSolved: total,
-          categories: [
-            { label: 'Easy', count: easy, color: 'var(--lc-easy)', pct: Math.round((easy / total) * 100) },
-            { label: 'Medium', count: medium, color: 'var(--lc-medium)', pct: Math.round((medium / total) * 100) },
-            { label: 'Hard', count: hard, color: 'var(--lc-hard)', pct: Math.max(3, Math.round((hard / total) * 100)) },
-          ],
-        };
-        setStats(newStats);
-        localStorage.setItem('portfolio_leetcode_stats', JSON.stringify(newStats));
+        // Secondary fallback API
+        if (!success) {
+          try {
+            const res = await fetch('https://alfa-leetcode-api.onrender.com/Akashyatinjain/solved');
+            if (res.ok) {
+              const data = await res.json();
+              if (data && typeof data.solvedProblem === 'number' && data.solvedProblem > 0) {
+                total = data.solvedProblem;
+                easy = data.easySolved || 0;
+                medium = data.mediumSolved || 0;
+                hard = data.hardSolved || 0;
+                success = true;
+              }
+            }
+          } catch {
+            /* try fallback */
+          }
+        }
+
+        // Tertiary fallback API
+        if (!success) {
+          try {
+            const res = await fetch('https://leetcode-stats-api.herokuapp.com/Akashyatinjain');
+            if (res.ok) {
+              const data = await res.json();
+              if (data && data.status === 'success' && data.totalSolved > 0) {
+                total = data.totalSolved;
+                easy = data.easySolved || 0;
+                medium = data.mediumSolved || 0;
+                hard = data.hardSolved || 0;
+                success = true;
+              }
+            }
+          } catch {
+            /* keep defaults */
+          }
+        }
+
+        if (success && total > 0) {
+          const newStats = {
+            totalSolved: total,
+            categories: [
+              { label: 'Easy', count: easy, color: 'var(--lc-easy)', pct: Math.round((easy / total) * 100) },
+              { label: 'Medium', count: medium, color: 'var(--lc-medium)', pct: Math.round((medium / total) * 100) },
+              { label: 'Hard', count: hard, color: 'var(--lc-hard)', pct: Math.max(3, Math.round((hard / total) * 100)) },
+            ],
+          };
+          setStats(newStats);
+          localStorage.setItem('portfolio_leetcode_stats', JSON.stringify(newStats));
+        }
       } catch {
         /* keep defaults */
       }

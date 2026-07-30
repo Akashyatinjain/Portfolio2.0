@@ -20,7 +20,7 @@ export const profile = {
 export const stats = {
   cgpa: '8.50',
   projects: '7+',
-  problemsSolved: '180+',
+  problemsSolved: '195+',
   studentsMentored: '100+',
 };
 
