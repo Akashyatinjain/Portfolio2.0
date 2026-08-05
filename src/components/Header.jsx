@@ -102,7 +102,7 @@ const Header = () => {
   };
 
   const handleResumeClick = () => {
-    window.open('/resume/Resume.pdf', '_blank');
+    window.open('/resume/Resume.pdf?v=latest', '_blank');
   };
 
   return (

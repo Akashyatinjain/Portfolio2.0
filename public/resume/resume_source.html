@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>AKASH JAIN - Resume</title>
+<style>
+  @page {
+    size: letter;
+    margin: 0.35in 0.45in 0.35in 0.45in;
+  }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: "Times New Roman", Times, serif;
+    color: #111;
+    background: #fff;
+    font-size: 9.6pt;
+    line-height: 1.25;
+    -webkit-print-color-adjust: exact;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  header h1 {
+    font-size: 22pt;
+    font-weight: bold;
+    letter-spacing: 0.8px;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+  }
+  header .subtitle {
+    font-size: 10.2pt;
+    margin-bottom: 2px;
+  }
+  header .contact {
+    font-size: 9.4pt;
+    margin-bottom: 2px;
+  }
+  header .links {
+    font-size: 9.4pt;
+  }
+  header .links a {
+    color: #000;
+    text-decoration: underline;
+  }
+
+  .section {
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: 10.2pt;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #111;
+    padding-bottom: 1px;
+    margin-bottom: 4px;
+  }
+
+  .profile-text {
+    text-align: justify;
+    font-size: 9.2pt;
+    line-height: 1.26;
+  }
+
+  .item {
+    margin-bottom: 5px;
+  }
+  .item:last-child {
+    margin-bottom: 0;
+  }
+
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 9.6pt;
+  }
+  .item-title {
+    font-weight: bold;
+  }
+  .item-date {
+    font-style: italic;
+    font-size: 9.2pt;
+  }
+  .item-sub {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 9.2pt;
+    font-style: italic;
+    margin-top: 1px;
+    margin-bottom: 2px;
+  }
+
+  ul {
+    list-style-type: disc;
+    margin-left: 18px;
+    margin-top: 2px;
+  }
+  li {
+    font-size: 9.0pt;
+    line-height: 1.24;
+    margin-bottom: 2px;
+    text-align: justify;
+  }
+
+  .skills-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.2pt;
+  }
+  .skills-table td {
+    padding-bottom: 2px;
+    vertical-align: top;
+  }
+  .skills-label {
+    font-weight: bold;
+    white-space: nowrap;
+    padding-right: 6px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AKASH JAIN</h1>
+  <div class="subtitle">Information Technology Undergraduate | Full-Stack Web Developer</div>
+  <div class="contact">Mumbai, Maharashtra &bull; +91 7710926977 &bull; aj0881871@student.sfit.ac.in</div>
+  <div class="links">
+    <a href="https://profolio-AkashJain.vercel.app/">Portfolio</a> &bull;
+    <a href="https://github.com/Akashyatinjain">GitHub</a> &bull;
+    <a href="https://www.linkedin.com/in/akash-yatin-jain">LinkedIn</a> &bull;
+    <a href="https://leetcode.com/u/Akashyatinjain/">LeetCode</a>
+  </div>
+</header>
+
+<div class="section">
+  <div class="section-title">PROFILE SUMMARY</div>
+  <p class="profile-text">
+    Information Technology undergraduate with hands-on experience building and deploying full-stack web applications using React.js, Node.js, Express.js, and PostgreSQL. Comfortable across the stack &mdash; from REST API design and authentication (JWT, OAuth) to responsive UI development and cloud deployment (Vercel, Render). Strong fundamentals in Data Structures &amp; Algorithms, Git/GitHub, and CI/CD, with 5+ deployed personal projects. Seeking a Software Development Internship to apply and grow these skills in a production engineering environment.
+  </p>
+</div>
+
+<div class="section">
+  <div class="section-title">EDUCATION</div>
+  <div class="item">
+    <div class="item-header">
+      <span class="item-title">St. Francis Institute of Technology &mdash; B.Tech in Information Technology</span>
+      <span class="item-date">Expected 03/2028</span>
+    </div>
+    <div class="item-sub">
+      <span>GPA: 8.50 / 10</span>
+      <span>Mumbai, Maharashtra</span>
+    </div>
+  </div>
+  <div class="item" style="margin-top: 3px;">
+    <div class="item-header">
+      <span class="item-title">Sudarshan Jr. College &mdash; Class XII (Commerce, Science &amp; Arts)</span>
+      <span class="item-date">07/2022 &ndash; 05/2024</span>
+    </div>
+    <div class="item-sub">
+      <span>Percentage: 76.2%</span>
+      <span></span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">PROJECTS</div>
+  
+  <div class="item">
+    <div class="item-header">
+      <span class="item-title">DataStock &mdash; Cloud Storage Platform</span>
+      <span class="item-date">05/2026 &ndash; 07/2026</span>
+    </div>
+    <ul>
+      <li>Built a secure, self-hosted alternative to Google Drive with granular access controls and storage analytics, using a React SPA &rarr; Express REST API &rarr; PostgreSQL (Prisma ORM) &rarr; Cloudinary CDN architecture.</li>
+      <li>Implemented 3 authentication methods &mdash; JWT, Google OAuth, and email OTP verification &mdash; for secure user access.</li>
+      <li>Integrated Cloudinary for file storage supporting uploads up to 100 MB per file, with preview, download, and folder organization.</li>
+      <li>Designed responsive dashboards with 6 interactive storage analytics charts, file search, notifications, and profile management.</li>
+      <li>Handled concurrent file uploads with progress tracking; deployed frontend on Vercel and backend on Render with GitHub-based CI/CD.</li>
+    </ul>
+  </div>
+
+  <div class="item" style="margin-top: 4px;">
+    <div class="item-header">
+      <span class="item-title">Finance Tracker &mdash; Personal Finance Management App</span>
+      <span class="item-date">10/2025</span>
+    </div>
+    <ul>
+      <li>Built a full-stack personal finance tracker (React.js, Node.js, PostgreSQL) with budget automation, spend reporting, and trend insights.</li>
+      <li>Implemented GitHub-based version control workflows and continuous feature iteration, including notification and security enhancements.</li>
+    </ul>
+  </div>
+
+  <div class="item" style="margin-top: 4px;">
+    <div class="item-header">
+      <span class="item-title">SIH &mdash; Doctor-Patient Platform (UI Demo)</span>
+      <span class="item-date">08/2025 &ndash; Present</span>
+    </div>
+    <ul>
+      <li>Building a doctor-patient platform UI demo using React.js, JavaScript, and CSS Grid for Smart India Hackathon (SIH).</li>
+      <li>Cleared the internal college-level selection round; currently preparing for the SIH PPT round.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">CERTIFICATIONS</div>
+  <ul style="list-style-type: disc; margin-left: 18px;">
+    <li>2nd Runner-Up &mdash; SFIT Colloquium Hackathon</li>
+    <li>The Complete Full-Stack Web Development Bootcamp &mdash; Full-Stack Development Program</li>
+    <li>Frontend Frontier &mdash; Frontend Web Development Program</li>
+  </ul>
+</div>
+
+<div class="section">
+  <div class="section-title">LEADERSHIP &amp; VOLUNTEERING</div>
+  <div class="item">
+    <div class="item-header">
+      <span class="item-title">IEEE Student Branch, St. Francis Institute of Technology &mdash; Technical Executive</span>
+      <span class="item-date">07/2026 &ndash; Present</span>
+    </div>
+    <ul>
+      <li>Organized and coordinated technical workshops, coding events, and hackathons for students.</li>
+      <li>Collaborated with the IEEE committee to plan and execute technical activities and campus events.</li>
+      <li>Managed event logistics, participant engagement, and technical support.</li>
+      <li>Partnered with cross-functional teams to promote learning opportunities and boost student participation.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">SKILLS</div>
+  <table class="skills-table">
+    <tr>
+      <td class="skills-label">Languages &amp; Frameworks:</td>
+      <td>JavaScript, Java, C, React.js, Node.js, Express.js, Tailwind CSS</td>
+    </tr>
+    <tr>
+      <td class="skills-label">Databases &amp; ORM:</td>
+      <td>PostgreSQL, MongoDB, Prisma ORM, pgAdmin</td>
+    </tr>
+    <tr>
+      <td class="skills-label">Tools &amp; Platforms:</td>
+      <td>Git, GitHub, Docker, GitHub Actions (CI/CD), Postman, Vercel, Render, VS Code, Figma, Canva</td>
+    </tr>
+    <tr>
+      <td class="skills-label">Core Concepts:</td>
+      <td>Data Structures &amp; Algorithms, REST APIs, JWT Authentication, Socket.io, OAuth, Python (fundamentals)</td>
+    </tr>
+    <tr>
+      <td class="skills-label">Languages Spoken:</td>
+      <td>English, Hindi, Kannada, Marathi, Marwari (Basic)</td>
+    </tr>
+  </table>
+</div>
+
+</body>
+</html>

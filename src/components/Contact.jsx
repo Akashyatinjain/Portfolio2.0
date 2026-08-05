@@ -116,7 +116,7 @@ const Contact = () => {
             <div className="contact-socials">
               <span className="contact-socials-label">Connect Elsewhere</span>
               <div className="contact-socials-row">
-                <a href="/resume/Resume.pdf" download className="social-chip resume-chip" title="Download Resume">
+                <a href="/resume/Resume.pdf?v=latest" download className="social-chip resume-chip" title="Download Resume">
                   <FileText size={16} /> Resume PDF
                 </a>
                 <a href={profile.links.github} target="_blank" rel="noopener noreferrer" className="social-chip" title="GitHub">
