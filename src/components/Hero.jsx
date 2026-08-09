@@ -8,7 +8,7 @@ const heroStats = [
   { value: stats.projects, label: 'Live projects' },
   { value: stats.cgpa, label: 'CGPA' },
   { value: stats.problemsSolved, label: 'DSA solved' },
-  { value: 'IEEE Lead', label: 'SFIT Tech Committee' },
+  { value: 'IEEE Executive', label: 'SFIT Tech Committee' },
 ];
 
 const Hero = () => {

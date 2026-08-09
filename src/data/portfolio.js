@@ -32,7 +32,7 @@ export const achievements = [
   },
   {
     icon: 'users',
-    label: 'IEEE Tech Lead',
+    label: 'IEEE Technical Executive',
     detail: 'Organizing tech workshops',
   },
   {
@@ -90,7 +90,7 @@ export const education = [
 
 export const experience = [
   {
-    role: 'IEEE Technical Committee Lead',
+    role: 'IEEE Technical Executive',
     organization: 'SFIT Student Branch',
     period: '2026 - Present',
     description: 'Responsible for leading technical workshops, planning bootcamps, and organizing project hackathons to mentor students in full-stack development.',
