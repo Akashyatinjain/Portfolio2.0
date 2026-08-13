@@ -4,82 +4,112 @@ import { Github, SparklesIcon, GraduationIcon, TrophyIcon } from './Icons';
 import { profile, bio, skills, education, certifications } from '../data/portfolio';
 import './About.css';
 
-const defaultGithubStats = {
-  contributions: '720+',
-  commits: '450',
-  streak: '18d',
+const LANG_COLORS = {
+  JavaScript: '#f7df1e',
+  HTML: '#e34f26',
+  CSS: '#1572b6',
+  TypeScript: '#3178c6',
+  Java: '#b07219',
+  Python: '#3572A5',
+  'C++': '#f34b7d',
+  C: '#555555',
 };
 
-const defaultLanguages = [
-  { name: 'JavaScript', pct: '65%', color: '#f7df1e' },
-  { name: 'HTML', pct: '14%', color: '#e34f26' },
-  { name: 'CSS', pct: '10%', color: '#1572b6' },
-];
-
 const About = () => {
-  const [githubStats, setGithubStats] = useState(() => {
-    try {
-      const cached = localStorage.getItem('portfolio_github_stats');
-      return cached ? JSON.parse(cached) : defaultGithubStats;
-    } catch {
-      return defaultGithubStats;
-    }
-  });
-
-  const [languages, setLanguages] = useState(() => {
-    try {
-      const cached = localStorage.getItem('portfolio_github_languages');
-      return cached ? JSON.parse(cached) : defaultLanguages;
-    } catch {
-      return defaultLanguages;
-    }
-  });
+  const [githubStats, setGithubStats] = useState(null);
+  const [languages, setLanguages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const username = 'Akashyatinjain';
-    const fetchGithub = async () => {
+    let isMounted = true;
+
+    const fetchGithubData = async () => {
       try {
-        const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}`);
-        if (!res.ok) return;
-        const data = await res.json();
-        if (!data.contributions?.length) return;
+        const [resAll, resLast, resRepos] = await Promise.all([
+          fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=all`),
+          fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last`),
+          fetch(`https://api.github.com/users/${username}/repos?per_page=100`),
+        ]);
 
-        const sorted = [...data.contributions].sort((a, b) => new Date(a.date) - new Date(b.date));
-        const todayStr = new Date().toISOString().split('T')[0];
-        let todayIdx = sorted.findIndex((d) => d.date === todayStr);
-        if (todayIdx === -1) todayIdx = sorted.length - 1;
+        let total = 0;
+        let commits = 0;
+        let currentStreak = 0;
 
-        let longest = 0;
-        let temp = 0;
-        for (let i = 0; i <= todayIdx; i++) {
-          if (sorted[i].count > 0) {
-            temp++;
-            if (temp > longest) longest = temp;
-          } else temp = 0;
+        if (resAll.ok) {
+          const dataAll = await resAll.json();
+          total = Object.values(dataAll.total || {}).reduce((s, v) => (typeof v === 'number' ? s + v : s), 0);
+          const year = new Date().getFullYear().toString();
+          commits = dataAll.total?.[year] || 0;
         }
 
-        let current = 0;
-        if (sorted[todayIdx]?.count > 0) {
-          for (let i = todayIdx; i >= 0; i--) {
-            if (sorted[i].count > 0) current++;
-            else break;
+        if (resLast.ok) {
+          const dataLast = await resLast.json();
+          if (dataLast.contributions?.length) {
+            const sorted = [...dataLast.contributions].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const now = new Date();
+            const localToday = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            const utcToday = now.toISOString().split('T')[0];
+
+            let todayIdx = sorted.findIndex((d) => d.date === localToday || d.date === utcToday);
+            if (todayIdx === -1) todayIdx = sorted.length - 1;
+
+            let startIdx = todayIdx;
+            // If no commits today yet, start counting from yesterday if yesterday had commits
+            if (sorted[startIdx]?.count === 0 && startIdx > 0 && sorted[startIdx - 1]?.count > 0) {
+              startIdx--;
+            }
+
+            if (sorted[startIdx]?.count > 0) {
+              for (let i = startIdx; i >= 0; i--) {
+                if (sorted[i].count > 0) currentStreak++;
+                else break;
+              }
+            }
           }
         }
 
-        const total = Object.values(data.total).reduce((s, v) => s + v, 0);
-        const year = new Date().getFullYear().toString();
-        const newStats = {
-          contributions: `${total}`,
-          commits: String(data.total[year] || 0),
-          streak: `${current}d`,
-        };
-        setGithubStats(newStats);
-        localStorage.setItem('portfolio_github_stats', JSON.stringify(newStats));
+        let parsedLangs = [];
+        if (resRepos.ok) {
+          const repos = await resRepos.json();
+          if (Array.isArray(repos)) {
+            const langMap = {};
+            repos.forEach((r) => {
+              if (r.language && !r.fork) {
+                langMap[r.language] = (langMap[r.language] || 0) + (r.size || 1);
+              }
+            });
+            const totalSize = Object.values(langMap).reduce((a, b) => a + b, 0) || 1;
+            parsedLangs = Object.entries(langMap)
+              .sort((a, b) => b[1] - a[1])
+              .filter(([_, size]) => Math.round((size / totalSize) * 100) > 0)
+              .slice(0, 4)
+              .map(([name, size]) => ({
+                name,
+                pct: `${Math.round((size / totalSize) * 100)}%`,
+                color: LANG_COLORS[name] || '#888888',
+              }));
+          }
+        }
+
+        if (isMounted) {
+          setGithubStats({
+            contributions: `${total}`,
+            commits: `${commits}`,
+            streak: `${currentStreak}d`,
+          });
+          setLanguages(parsedLangs);
+          setLoading(false);
+        }
       } catch {
-        /* keep defaults */
+        if (isMounted) setLoading(false);
       }
     };
-    fetchGithub();
+
+    fetchGithubData();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
@@ -140,32 +170,46 @@ const About = () => {
 
             <div className="github-stats-row">
               <div className="github-stat">
-                <span className="github-stat-val">{githubStats.contributions}</span>
+                <span className="github-stat-val">
+                  {loading ? <span className="stat-skeleton" /> : (githubStats?.contributions || '0')}
+                </span>
                 <span className="github-stat-lbl">Contributions</span>
               </div>
               <div className="github-stat">
-                <span className="github-stat-val">{githubStats.commits}</span>
+                <span className="github-stat-val">
+                  {loading ? <span className="stat-skeleton" /> : (githubStats?.commits || '0')}
+                </span>
                 <span className="github-stat-lbl">Year Commits</span>
               </div>
               <div className="github-stat">
-                <span className="github-stat-val">{githubStats.streak}</span>
+                <span className="github-stat-val">
+                  {loading ? <span className="stat-skeleton" /> : (githubStats?.streak || '0d')}
+                </span>
                 <span className="github-stat-lbl">Streak</span>
               </div>
             </div>
 
             <div className="github-langs">
               <span className="github-langs-title">Top Languages</span>
-              {languages.map((lang) => (
-                <div key={lang.name} className="lang-row">
-                  <div className="lang-row-top">
-                    <span className="lang-name">{lang.name}</span>
-                    <span className="lang-pct">{lang.pct}</span>
-                  </div>
-                  <div className="lang-track">
-                    <div className="lang-fill" style={{ width: lang.pct, background: lang.color }} />
-                  </div>
+              {loading ? (
+                <div className="lang-skeleton-group">
+                  <div className="lang-skeleton-bar" />
+                  <div className="lang-skeleton-bar" />
+                  <div className="lang-skeleton-bar" />
                 </div>
-              ))}
+              ) : (
+                languages.map((lang) => (
+                  <div key={lang.name} className="lang-row">
+                    <div className="lang-row-top">
+                      <span className="lang-name">{lang.name}</span>
+                      <span className="lang-pct">{lang.pct}</span>
+                    </div>
+                    <div className="lang-track">
+                      <div className="lang-fill" style={{ width: lang.pct, background: lang.color }} />
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

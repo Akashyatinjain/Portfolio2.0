@@ -8,7 +8,7 @@ export const profile = {
   email: 'aj0881871@gmail.com',
   studentEmail: 'aj0881871@student.sfit.ac.in',
   phone: '+91 7710926977',
-  available: 'Open to internships · graduating May 2028',
+  available: 'Open to internships · graduating Mar 2028',
   links: {
     github: 'https://github.com/Akashyatinjain',
     linkedin: 'https://www.linkedin.com/in/akash-yatin-jain',
@@ -51,7 +51,7 @@ export const availableFor = [
 
 export const bio = {
   intro:
-    "I'm a 3rd-year IT student at SFIT who builds full-stack web apps — auth flows, REST APIs, PostgreSQL schemas, and React frontends deployed on Vercel.",
+    "I'm an IT student at SFIT who builds full-stack web apps — auth flows, REST APIs, PostgreSQL schemas, and React frontends deployed on Vercel.",
   currently:
     "Shipping DataStock (cloud storage) and Finance Tracker v2. Deepening Docker, system design, and backend security patterns alongside coursework.",
   interests: ['Full-Stack Development', 'Backend Engineering', 'DSA & Algorithms'],
@@ -74,15 +74,15 @@ export const education = [
   {
     school: 'St Francis Institute of Technology',
     degree: 'B.Tech in Information Technology',
-    period: '2023 – Present',
-    note: 'May 2026 · CGPA 8.50',
+    period: 'Expected Mar 2028',
+    note: 'Expected Mar 2028 · CGPA 8.50',
     detail:
       'Core engineering, database management systems, and algorithms. Actively building full-stack projects alongside coursework.',
   },
   {
     school: 'Sudarshan Jr College of Commerce, Science and Arts',
     degree: 'Class XII HSC (Science)',
-    period: 'July 2022 – May 2024',
+    period: 'Jul 2022 – May 2024',
     note: '76.2%',
     detail: 'Science stream with focus on mathematics and computer fundamentals.',
   },
@@ -92,7 +92,7 @@ export const experience = [
   {
     role: 'IEEE Technical Executive',
     organization: 'SFIT Student Branch',
-    period: '2026 - Present',
+    period: 'Jul 2026 – Present',
     description: 'Responsible for leading technical workshops, planning bootcamps, and organizing project hackathons to mentor students in full-stack development.',
     tags: ['Leadership', 'Mentoring', 'Event Management']
   },
