@@ -17,6 +17,38 @@
   background: var(--bg-card);
 }
 
+.contact-avatar-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.contact-avatar-photo {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent-light);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+.contact-avatar-name {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.contact-avatar-role {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
 .contact-row {
   display: flex;
   align-items: center;

@@ -127,6 +127,13 @@ const About = () => {
         <div className="about-layout">
           <div className="about-main reveal-left">
             <div className="about-bio-card card">
+              <div className="about-profile-header">
+                <img src={profile.avatar} alt={profile.name} className="about-profile-photo" />
+                <div className="about-profile-info">
+                  <h3 className="about-profile-name">{profile.name}</h3>
+                  <span className="about-profile-sub">{profile.title} &bull; {profile.location}</span>
+                </div>
+              </div>
               <p className="about-text">
                 {bio.intro} Problem-solving on LeetCode in Java keeps my DSA sharp — arrays, binary search, DP, and graph patterns are where I spend most of my practice time.
               </p>

@@ -109,7 +109,7 @@ const Header = () => {
     <header className={`header ${scrolled ? 'scrolled' : ''}`}>
       <div className="container header-inner">
         <button type="button" className="logo" onClick={() => scrollTo('home')}>
-          <span className="logo-mark">AJ</span>
+          <img src={profile.avatar} alt={profile.name} className="logo-avatar-img" />
           <span className="logo-name">{profile.shortName}</span>
         </button>
 

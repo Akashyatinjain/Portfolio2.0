@@ -57,6 +57,21 @@
   box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
 }
 
+.logo-avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent-light);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  transition: all 0.3s ease;
+}
+
+.logo:hover .logo-avatar-img {
+  transform: scale(1.08);
+  border-color: var(--accent);
+}
+
 .logo-mark {
   font-family: var(--font-display);
   font-weight: 800;
