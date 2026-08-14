@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, FolderGit2, FileText, Sun, Moon } from 'lucide-react';
-import { Github, Linkedin } from './Icons';
+import { Github, Linkedin, Leetcode } from './Icons';
 import { profile } from '../data/portfolio';
 import './FloatingDock.css';
 
@@ -61,6 +61,17 @@ const FloatingDock = ({ theme, toggleTheme }) => {
       >
         <Linkedin size={18} />
         <span className="dock-tooltip">LinkedIn</span>
+      </a>
+
+      <a
+        href={profile.links.leetcode}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="dock-item"
+        aria-label="LeetCode"
+      >
+        <Leetcode size={18} />
+        <span className="dock-tooltip">LeetCode</span>
       </a>
 
       <div className="dock-divider" />

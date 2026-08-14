@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FileText, Sun, Moon } from 'lucide-react';
 import { profile } from '../data/portfolio';
+import './Navbar.css';
 
 const Navbar = ({ theme, toggleTheme }) => {
   const location = useLocation();
