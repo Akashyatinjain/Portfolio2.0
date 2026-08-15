@@ -78,7 +78,7 @@ export const experience = [
     role: 'Full-Stack Hackathon Runner-Up',
     organization: 'Colloquium SFIT Exhibition',
     period: 'Mar 2026',
-    description: 'Built SWASTHYA health analytics dashboard in a 24-hour hackathon sprint. Awarded 2nd Runner-Up.',
+    description: 'Built a full-stack hardware and software solution to enhance the security of parcels left outside homes. The project was awarded 2nd Runner-Up at the Colloquium SFIT Exhibition.',
     tags: ['React', 'SIH Hackathon', 'Ayurveda Platform']
   }
 ];
