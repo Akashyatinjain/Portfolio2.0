@@ -55,8 +55,8 @@ const Hero = () => {
             src={profile.avatar || '/avatar.png'}
             alt={profile.name}
             className="hero-avatar-img"
-            width="140"
-            height="140"
+            width="130"
+            height="130"
             loading="eager"
             decoding="async"
           />

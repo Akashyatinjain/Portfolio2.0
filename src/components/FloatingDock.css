@@ -1,8 +1,8 @@
 .floating-dock-container {
   position: fixed;
-  bottom: 1.25rem;
+  bottom: 0.95rem;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(0);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -12,9 +12,17 @@
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
-  padding: 0.35rem 0.5rem;
+  padding: 0.3rem 0.45rem;
   box-shadow: var(--shadow-dock);
-  transition: all 0.2s var(--ease-smooth);
+  opacity: 1;
+  transition: transform 0.28s var(--ease-spring), opacity 0.24s var(--ease-smooth), background-color 0.2s var(--ease-smooth), border-color 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+  will-change: transform, opacity;
+}
+
+.floating-dock-container.dock-hidden {
+  transform: translateX(-50%) translateY(calc(100% + 2rem));
+  opacity: 0;
+  pointer-events: none;
 }
 
 .dock-item {

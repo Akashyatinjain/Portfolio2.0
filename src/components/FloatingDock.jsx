@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, FolderGit2, FileText, Sun, Moon } from 'lucide-react';
 import { Github, Linkedin, Leetcode } from './Icons';
@@ -7,9 +7,49 @@ import './FloatingDock.css';
 
 const FloatingDock = ({ theme, toggleTheme }) => {
   const location = useLocation();
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // If at or near top of the page, keep it visible
+      if (currentScrollY < 40) {
+        setIsVisible(true);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      // If user reaches near the bottom of the page, show it
+      const isBottom = window.innerHeight + currentScrollY >= document.documentElement.scrollHeight - 50;
+      if (isBottom) {
+        setIsVisible(true);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      // Scrolling down -> hide dock to avoid covering content
+      if (currentScrollY > lastScrollY.current + 8) {
+        setIsVisible(false);
+      } 
+      // Scrolling up -> reveal dock for navigation
+      else if (currentScrollY < lastScrollY.current - 8) {
+        setIsVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <nav className="floating-dock-container" aria-label="Floating Quick Navigation">
+    <nav
+      className={`floating-dock-container ${isVisible ? 'dock-visible' : 'dock-hidden'}`}
+      aria-label="Floating Quick Navigation"
+    >
       <Link
         to="/"
         className={`dock-item ${location.pathname === '/' ? 'active' : ''}`}
