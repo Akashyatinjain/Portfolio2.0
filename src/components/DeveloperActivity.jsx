@@ -37,9 +37,9 @@ const LANG_COLORS = {
 const DeveloperActivity = () => {
   const [dsaPlatform, setDsaPlatform] = useState('leetcode');
   const [githubStats, setGithubStats] = useState({
-    contributions: '1,170+',
-    commits: '918',
-    streak: '65d',
+    contributions: '1,282+',
+    commits: '1,028',
+    streak: '68d',
   });
   const [languages, setLanguages] = useState([
     { name: 'JavaScript', pct: '68%', color: '#F7DF1E' },
@@ -58,9 +58,9 @@ const DeveloperActivity = () => {
           fetch(`https://api.github.com/users/${username}/repos?per_page=100`),
         ]);
 
-        let total = '1,170+';
-        let commits = '918';
-        let currentStreak = '65d';
+        let total = '1,282+';
+        let commits = '1,028';
+        let currentStreak = '68d';
 
         if (resAll.ok) {
           const dataAll = await resAll.json();
@@ -115,7 +115,7 @@ const DeveloperActivity = () => {
           if (parsedLangs.length > 0) setLanguages(parsedLangs);
         }
       } catch {
-        // Fallback default
+        // Fallback gracefully to default
       }
     };
 
@@ -128,17 +128,19 @@ const DeveloperActivity = () => {
   const currentData = dsaData[dsaPlatform];
 
   return (
-    <section className="section activity-section" id="developer-activity">
+    <section className="section activity-section" id="developer-activity" aria-label="Developer Activity and Algorithms">
       <h2 className="section-title">Developer Activity & Algorithms</h2>
       <div className="activity-grid">
-        {/* Compact GitHub Card */}
+        {/* GitHub Activity Card */}
         <div className="github-activity-card">
           <div className="github-card-header">
             <div className="github-user-info">
-              <Github size={20} className="github-icon-blue" />
+              <div className="github-icon-blue" aria-hidden="true">
+                <Github size={18} />
+              </div>
               <div className="github-title-wrap">
                 <span className="github-main-title">GitHub Activity</span>
-                <span className="github-handle-text">@Akashyatinjain &bull; 34 public repos</span>
+                <span className="github-handle-text">@Akashyatinjain · 40+ repos</span>
               </div>
             </div>
             <a
@@ -146,16 +148,17 @@ const DeveloperActivity = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="github-view-profile-btn"
+              aria-label="View Akash's GitHub Profile (opens in new tab)"
             >
               <span>Profile</span>
-              <ArrowUpRight size={13} />
+              <ArrowUpRight size={13} aria-hidden="true" />
             </a>
           </div>
 
           <div className="github-stats-3col">
             <div className="github-stat-box-card">
               <span className="github-stat-big-num">{githubStats.contributions}</span>
-              <span className="github-stat-sublbl">CONTRIBUTIONS</span>
+              <span className="github-stat-sublbl">CONTRIBS</span>
             </div>
             <div className="github-stat-box-card">
               <span className="github-stat-big-num">{githubStats.commits}</span>
@@ -186,39 +189,46 @@ const DeveloperActivity = () => {
           </div>
         </div>
 
-        {/* Compact DSA Problem Solving Card */}
-        <div className="dsa-stats-card">
+        {/* DSA Card */}
+        <div className="dsa-stats-card" data-platform={dsaPlatform}>
           <div className="dsa-card-header">
-            <div className="dsa-brand-title">
+            <div className="dsa-platform-mark" aria-hidden="true">
               {dsaPlatform === 'leetcode' ? (
-                <Leetcode size={16} style={{ color: '#2563EB' }} />
+                <Leetcode size={16} className="dsa-brand-icon leetcode" />
               ) : (
-                <TUF size={16} style={{ color: '#FF5E00' }} />
+                <TUF size={16} className="dsa-brand-icon striver" />
               )}
-              <span>{currentData.name}</span>
             </div>
 
-            <div className="dsa-segmented-toggle" aria-label="Toggle DSA Platform">
+            <div className="dsa-segmented-toggle" role="tablist" aria-label="Toggle DSA Platform">
               <button
                 type="button"
+                role="tab"
+                id="tab-leetcode"
+                aria-selected={dsaPlatform === 'leetcode'}
+                aria-controls="dsa-stats-panel"
                 className={`dsa-toggle-btn ${dsaPlatform === 'leetcode' ? 'active-leetcode' : ''}`}
                 onClick={() => setDsaPlatform('leetcode')}
               >
-                <Leetcode size={12} />
-                LeetCode
+                <Leetcode size={12} aria-hidden="true" />
+                <span>LeetCode</span>
               </button>
               <button
                 type="button"
+                role="tab"
+                id="tab-striver"
+                aria-selected={dsaPlatform === 'striver'}
+                aria-controls="dsa-stats-panel"
                 className={`dsa-toggle-btn ${dsaPlatform === 'striver' ? 'active-striver' : ''}`}
                 onClick={() => setDsaPlatform('striver')}
               >
-                <TUF size={12} />
-                Striver (TUF)
+                <TUF size={12} aria-hidden="true" />
+                <span>Striver (TUF)</span>
               </button>
             </div>
           </div>
 
-          <div className="dsa-stats-row">
+          <div className="dsa-stats-row" id="dsa-stats-panel" role="tabpanel" aria-labelledby={`tab-${dsaPlatform}`}>
             <div className="dsa-stat-box easy">
               <span className="dsa-stat-number">{currentData.easy}</span>
               <span className="dsa-stat-label">Easy</span>
@@ -243,7 +253,7 @@ const DeveloperActivity = () => {
           </div>
 
           <div className="dsa-footer-info">
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            <span className="dsa-footer-copy">
               84 LeetCode + 128 Striver A2Z
             </span>
             <a
@@ -251,9 +261,10 @@ const DeveloperActivity = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="dsa-profile-link"
+              aria-label={`View Akash's ${dsaPlatform === 'leetcode' ? 'LeetCode' : 'TUF'} Profile (opens in new tab)`}
             >
               <span>{dsaPlatform === 'leetcode' ? 'LeetCode' : 'TUF'} Profile</span>
-              <ExternalLink size={12} />
+              <ExternalLink size={12} aria-hidden="true" />
             </a>
           </div>
         </div>

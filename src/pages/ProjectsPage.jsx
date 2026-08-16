@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import Projects from '../components/Projects';
+import './ProjectsPage.css';
 
 const ProjectsPage = () => {
   useEffect(() => {
@@ -10,13 +11,12 @@ const ProjectsPage = () => {
 
   return (
     <div className="projects-page">
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div className="projects-page-nav">
         <Link
           to="/"
           className="btn btn-outline btn-sm"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
         >
-          <ArrowLeft size={14} />
+          <ArrowLeft size={14} aria-hidden="true" />
           Back to Home
         </Link>
       </div>

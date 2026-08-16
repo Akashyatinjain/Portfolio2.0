@@ -27,7 +27,7 @@ export const stats = {
 
 export const proofAchievements = [
   { title: 'Hackathon Runner-Up', subtitle: 'Colloquium SFIT 2026', type: 'trophy' },
-  { title: '34+ Public Repos', subtitle: 'Active GitHub Contributor', type: 'code' },
+  { title: '40+ Public Repos', subtitle: 'Active GitHub Contributor', type: 'code' },
   { title: '212+ DSA Completed', subtitle: '84 LeetCode + 128 Striver A2Z', type: 'brain' },
   { title: '8.50 CGPA', subtitle: 'St. Francis Institute of Tech', type: 'graduation' },
 ];
@@ -75,11 +75,11 @@ export const experience = [
     tags: ['Leadership', 'Mentoring', 'Event Management']
   },
   {
-    role: 'Full-Stack Hackathon Runner-Up',
+    role: 'Hackathon Runner-Up',
     organization: 'Colloquium SFIT Exhibition',
     period: 'Mar 2026',
     description: 'Built a full-stack hardware and software solution to enhance the security of parcels left outside homes. The project was awarded 2nd Runner-Up at the Colloquium SFIT Exhibition.',
-    tags: ['React', 'SIH Hackathon', 'Ayurveda Platform']
+    tags: ['Hardware', 'Software', 'IoT', '2nd Runner-Up']
   }
 ];
 

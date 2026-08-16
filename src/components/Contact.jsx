@@ -74,7 +74,7 @@ const Contact = () => {
             href={`mailto:${profile.email}`}
             className="btn btn-dark btn-sm"
           >
-            <Mail size={14} />
+            <Mail size={14} aria-hidden="true" />
             Email Me Directly
           </a>
           <button
@@ -82,59 +82,74 @@ const Contact = () => {
             onClick={handleCopy}
             className="contact-copy-email"
             title="Copy email to clipboard"
+            aria-label={copied ? 'Email copied to clipboard' : `Copy email address ${profile.email}`}
           >
-            {copied ? <Check size={14} style={{ color: '#10B981' }} /> : <Copy size={14} />}
+            {copied ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}
             <span>{copied ? 'Email Copied!' : profile.email}</span>
           </button>
         </div>
 
         <form className="contact-form" onSubmit={handleSubmit}>
           <div className="contact-form-row">
-            <input
-              type="text"
-              name="name"
-              placeholder="Your Name"
-              value={formData.name}
+            <div className="form-field">
+              <label htmlFor="contact-name" className="form-label">Name</label>
+              <input
+                id="contact-name"
+                type="text"
+                name="name"
+                placeholder="Your Name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="form-input"
+                autoComplete="name"
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="contact-email" className="form-label">Email</label>
+              <input
+                id="contact-email"
+                type="email"
+                name="email"
+                placeholder="Your Email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="form-input"
+                autoComplete="email"
+              />
+            </div>
+          </div>
+          <div className="form-field">
+            <label htmlFor="contact-message" className="form-label">Message</label>
+            <textarea
+              id="contact-message"
+              name="message"
+              placeholder="Your message..."
+              rows={3}
+              value={formData.message}
               onChange={handleChange}
               required
-              className="form-input"
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Your Email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="form-input"
+              className="form-textarea"
             />
           </div>
-          <textarea
-            name="message"
-            placeholder="Your message..."
-            rows={3}
-            value={formData.message}
-            onChange={handleChange}
-            required
-            className="form-textarea"
-          />
           <button
             type="submit"
             className="btn btn-outline btn-sm contact-submit-btn"
             disabled={status === 'sending'}
           >
-            <Send size={13} />
+            <Send size={13} aria-hidden="true" />
             {status === 'sending' ? 'Sending...' : 'Send Message'}
           </button>
 
           {status === 'success' && (
-            <span className="contact-toast-msg">
-              ✓ Message sent! I'll get back to you as soon as possible.
+            <span className="contact-toast-msg" role="status">
+              Message sent! I'll get back to you as soon as possible.
             </span>
           )}
           {status === 'error' && (
-            <span className="contact-toast-msg" style={{ color: '#EF4444' }}>
-              ✕ Could not send message. Please click "Email Me Directly".
+            <span className="contact-toast-msg contact-toast-error" role="alert">
+              Could not send message. Please click "Email Me Directly".
             </span>
           )}
         </form>

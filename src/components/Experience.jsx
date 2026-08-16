@@ -4,6 +4,7 @@ import './Experience.css';
 
 const getInitials = (name) => {
   if (!name) return 'EX';
+  if (name.includes('IEEE')) return 'IEEE';
   const parts = name.split(' ');
   if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`;
   return name.slice(0, 2).toUpperCase();
@@ -11,18 +12,18 @@ const getInitials = (name) => {
 
 const Experience = () => {
   return (
-    <section className="section" id="experience">
+    <section className="section" id="experience" aria-label="Experience & Leadership">
       <h2 className="section-title">Experience & Leadership</h2>
       <div className="experience-list">
         {experience.map((item, index) => (
-          <div key={index} className="experience-item">
-            <div className="experience-logo">
+          <article key={index} className="experience-item">
+            <div className="experience-logo" aria-hidden="true">
               {getInitials(item.organization)}
             </div>
             <div className="experience-details">
               <div className="experience-header">
-                <span className="experience-org">{item.organization}</span>
-                <span className="experience-period">{item.period}</span>
+                <h3 className="experience-org">{item.organization}</h3>
+                <time className="experience-period">{item.period}</time>
               </div>
               <div className="experience-role">{item.role}</div>
               {item.description && (
@@ -36,7 +37,7 @@ const Experience = () => {
                 </div>
               )}
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </section>
@@ -44,3 +45,4 @@ const Experience = () => {
 };
 
 export default Experience;
+

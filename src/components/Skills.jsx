@@ -1,82 +1,63 @@
 import React from 'react';
+import { Cloud, Code2, Database, Rocket, ShieldCheck } from 'lucide-react';
 import { skillTiers } from '../data/portfolio';
 import './Skills.css';
+
+const skillSections = [
+  {
+    key: 'coreStack',
+    title: 'Core Full-Stack',
+    badge: 'Primary Stack',
+    icon: Rocket,
+    featured: true,
+  },
+  {
+    key: 'databasesAndOrm',
+    title: 'Databases & ORM',
+    icon: Database,
+  },
+  {
+    key: 'devopsAndCloud',
+    title: 'Deployment & DevOps',
+    icon: Cloud,
+  },
+  {
+    key: 'languagesAndDsa',
+    title: 'Languages & DSA',
+    icon: Code2,
+  },
+  {
+    key: 'securityAndTools',
+    title: 'Security & Ecosystem',
+    icon: ShieldCheck,
+  },
+];
 
 const Skills = () => {
   return (
     <section className="section" id="skills">
       <h2 className="section-title">Technical Skills & Proficiency</h2>
       <div className="skills-grid-layout">
-        {/* Core Primary Stack */}
-        <div className="skill-tier-card primary-stack">
-          <div className="skill-tier-header">
-            <span className="skill-tier-title">🚀 Core Full-Stack (Primary Proficiency)</span>
-            <span className="skill-tier-badge">Primary Stack</span>
-          </div>
-          <div className="skill-pills-wrap">
-            {skillTiers.coreStack.map((item) => (
-              <span key={item} className="skill-pill-item">
-                {item}
+        {skillSections.map(({ key, title, badge, icon: Icon, featured }) => (
+          <div key={key} className={`skill-tier-card ${featured ? 'primary-stack' : ''}`}>
+            <div className="skill-tier-header">
+              <span className="skill-tier-title">
+                <span className="skill-tier-icon" aria-hidden="true">
+                  <Icon size={15} />
+                </span>
+                {title}
               </span>
-            ))}
+              {badge && <span className="skill-tier-badge">{badge}</span>}
+            </div>
+            <div className="skill-pills-wrap">
+              {skillTiers[key].map((item) => (
+                <span key={item} className="skill-pill-item">
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-
-        {/* Databases & ORM */}
-        <div className="skill-tier-card">
-          <div className="skill-tier-header">
-            <span className="skill-tier-title">🗄️ Databases & ORM</span>
-          </div>
-          <div className="skill-pills-wrap">
-            {skillTiers.databasesAndOrm.map((item) => (
-              <span key={item} className="skill-pill-item">
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Deployment & DevOps */}
-        <div className="skill-tier-card">
-          <div className="skill-tier-header">
-            <span className="skill-tier-title">☁️ Deployment & DevOps</span>
-          </div>
-          <div className="skill-pills-wrap">
-            {skillTiers.devopsAndCloud.map((item) => (
-              <span key={item} className="skill-pill-item">
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Languages & DSA */}
-        <div className="skill-tier-card">
-          <div className="skill-tier-header">
-            <span className="skill-tier-title">💻 Languages & DSA</span>
-          </div>
-          <div className="skill-pills-wrap">
-            {skillTiers.languagesAndDsa.map((item) => (
-              <span key={item} className="skill-pill-item">
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Security & Tools */}
-        <div className="skill-tier-card">
-          <div className="skill-tier-header">
-            <span className="skill-tier-title">🔐 Security & Ecosystem</span>
-          </div>
-          <div className="skill-pills-wrap">
-            {skillTiers.securityAndTools.map((item) => (
-              <span key={item} className="skill-pill-item">
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   );

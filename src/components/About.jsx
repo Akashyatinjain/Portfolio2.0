@@ -3,14 +3,16 @@ import './About.css';
 
 const About = () => {
   return (
-    <section className="section" id="about">
+    <section className="section" id="about" aria-label="About Me">
       <h2 className="section-title">About</h2>
-      <p className="about-text">
-        I'm an Information Technology student at St. Francis Institute of Technology (SFIT), Mumbai, building end-to-end full stack web applications with modern tech stacks.
-      </p>
-      <p className="about-text">
-        As IEEE Technical Executive, I conduct hands-on workshops and bootcamps on full-stack web development. I love tackling challenging problem solving in Java, designing relational database schemas in PostgreSQL, and engineering clean, accessible user interfaces.
-      </p>
+      <div className="about-content">
+        <p className="about-text">
+          I'm an Information Technology student at <strong>St. Francis Institute of Technology (SFIT), Mumbai</strong>, building end-to-end full-stack web applications with modern, resilient architectures.
+        </p>
+        <p className="about-text">
+          As <strong>IEEE Technical Executive</strong>, I conduct hands-on workshops and bootcamps on full-stack web development. I love tackling algorithmic problem solving in <strong>Java</strong>, designing relational database schemas in <strong>PostgreSQL</strong>, and engineering clean, accessible user interfaces in <strong>React</strong>.
+        </p>
+      </div>
     </section>
   );
 };
