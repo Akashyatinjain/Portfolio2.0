@@ -38,13 +38,13 @@ const LANG_COLORS = {
 const DeveloperActivity = () => {
   const [dsaPlatform, setDsaPlatform] = useState('leetcode');
   const [githubStats, setGithubStats] = useState({
-    contributions: '1,282+',
-    commits: '1,028',
-    streak: '68d',
+    contributions: '1,376',
+    commits: '1,122',
+    streak: '72d',
   });
   const [languages, setLanguages] = useState([
-    { name: 'JavaScript', pct: '68%', color: '#F7DF1E' },
-    { name: 'HTML / CSS', pct: '32%', color: '#E34F26' },
+    { name: 'JavaScript', pct: '81%', color: '#F7DF1E' },
+    { name: 'HTML / CSS', pct: '19%', color: '#E34F26' },
   ]);
 
   useEffect(() => {
@@ -59,9 +59,9 @@ const DeveloperActivity = () => {
           fetch(`https://api.github.com/users/${username}/repos?per_page=100`),
         ]);
 
-        let total = '1,282+';
-        let commits = '1,028';
-        let currentStreak = '68d';
+        let total = '1,376';
+        let commits = '1,122';
+        let maxStreak = '72d';
 
         if (resAll.ok) {
           const dataAll = await resAll.json();
@@ -69,18 +69,36 @@ const DeveloperActivity = () => {
           if (parsedTotal > 0) total = parsedTotal.toLocaleString();
           const year = new Date().getFullYear().toString();
           if (dataAll.total?.[year]) commits = `${dataAll.total[year]}`;
-        }
 
-        if (resLast.ok) {
+          if (Array.isArray(dataAll.contributions) && dataAll.contributions.length > 0) {
+            const sorted = [...dataAll.contributions].sort((a, b) => a.date.localeCompare(b.date));
+            let longestStreak = 0;
+            let currentStreakCount = 0;
+            for (let i = 0; i < sorted.length; i++) {
+              if (sorted[i].count > 0) {
+                currentStreakCount++;
+                if (currentStreakCount > longestStreak) longestStreak = currentStreakCount;
+              } else {
+                currentStreakCount = 0;
+              }
+            }
+            if (longestStreak > 0) maxStreak = `${longestStreak}d`;
+          }
+        } else if (resLast.ok) {
           const dataLast = await resLast.json();
           if (dataLast.contributions?.length) {
-            const sorted = [...dataLast.contributions].sort((a, b) => new Date(a.date) - new Date(b.date));
-            let streakCount = 0;
-            for (let i = sorted.length - 1; i >= 0; i--) {
-              if (sorted[i].count > 0) streakCount++;
-              else if (streakCount > 0) break;
+            const sorted = [...dataLast.contributions].sort((a, b) => a.date.localeCompare(b.date));
+            let longestStreak = 0;
+            let currentStreakCount = 0;
+            for (let i = 0; i < sorted.length; i++) {
+              if (sorted[i].count > 0) {
+                currentStreakCount++;
+                if (currentStreakCount > longestStreak) longestStreak = currentStreakCount;
+              } else {
+                currentStreakCount = 0;
+              }
             }
-            if (streakCount > 0) currentStreak = `${streakCount}d`;
+            if (longestStreak > 0) maxStreak = `${longestStreak}d`;
           }
         }
 
@@ -111,7 +129,7 @@ const DeveloperActivity = () => {
           setGithubStats({
             contributions: `${total}`,
             commits: `${commits}`,
-            streak: currentStreak,
+            streak: maxStreak,
           });
           if (parsedLangs.length > 0) setLanguages(parsedLangs);
         }
@@ -167,7 +185,7 @@ const DeveloperActivity = () => {
             </div>
             <div className="github-stat-box-card">
               <span className="github-stat-big-num">{githubStats.streak}</span>
-              <span className="github-stat-sublbl">STREAK</span>
+              <span className="github-stat-sublbl">MAX STREAK</span>
             </div>
           </div>
 
