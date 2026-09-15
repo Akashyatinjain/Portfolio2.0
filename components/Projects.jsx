@@ -10,13 +10,32 @@ const ProjectCard = ({ project }) => {
   return (
     <article className="project-card">
       <div className="project-img-wrap">
-        <img
-          src={project.image}
-          alt={`Screenshot of ${project.title}`}
-          className="project-img"
-          loading="lazy"
-          decoding="async"
-        />
+        {project.imageDark ? (
+          <>
+            <img
+              src={project.imageLight || project.image}
+              alt={`Screenshot of ${project.title}`}
+              className="project-img project-img-light"
+              loading="lazy"
+              decoding="async"
+            />
+            <img
+              src={project.imageDark}
+              alt={`Screenshot of ${project.title} (Dark Mode)`}
+              className="project-img project-img-dark"
+              loading="lazy"
+              decoding="async"
+            />
+          </>
+        ) : (
+          <img
+            src={project.image}
+            alt={`Screenshot of ${project.title}`}
+            className="project-img"
+            loading="lazy"
+            decoding="async"
+          />
+        )}
       </div>
       <div className="project-content">
         <h3 className="project-title">{project.title}</h3>
@@ -75,9 +94,11 @@ const Projects = ({ isHomePreview = false }) => {
 
   if (isHomePreview) {
     return (
-      <section className="section" id="projects">
-        <h2 className="section-title">Featured Projects</h2>
-        <p className="section-subtitle">Flagship full-stack applications with production architecture</p>
+      <section className="section" id="projects" aria-label="Featured Projects">
+        <div className="section-header-wrap">
+          <h2 className="section-title">Featured Projects</h2>
+          <p className="section-subtitle">Flagship full-stack applications with production architecture</p>
+        </div>
 
         <div className="projects-grid">
           {flagshipProjects.map((p) => (
@@ -96,16 +117,19 @@ const Projects = ({ isHomePreview = false }) => {
   }
 
   const allProjects = [...flagshipProjects, ...secondaryProjects];
-  const filtered = activeFilter === 'all'
-    ? allProjects
-    : allProjects.filter((p) => (p.category || 'frontend').toLowerCase() === activeFilter.toLowerCase());
+  const filtered =
+    activeFilter === 'all'
+      ? allProjects
+      : allProjects.filter((p) => (p.category || 'frontend').toLowerCase() === activeFilter.toLowerCase());
 
   return (
-    <section className="section">
-      <h1 className="projects-page-title">Projects & Work</h1>
-      <p className="section-subtitle">
-        A complete archive of full-stack systems, frontend interfaces, and hackathon prototypes.
-      </p>
+    <section className="section" aria-label="All Projects Archive">
+      <div className="section-header-wrap">
+        <h1 className="projects-page-title">Projects & Work</h1>
+        <p className="section-subtitle">
+          Complete archive of full-stack web applications, frontend prototypes, and hackathon projects.
+        </p>
+      </div>
 
       <div className="project-filters-bar" role="tablist" aria-label="Filter projects by category">
         {filters.map((f) => (

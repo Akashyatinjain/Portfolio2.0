@@ -65,7 +65,10 @@ const DeveloperActivity = () => {
 
         if (resAll.ok) {
           const dataAll = await resAll.json();
-          const parsedTotal = Object.values(dataAll.total || {}).reduce((s, v) => (typeof v === 'number' ? s + v : s), 0);
+          const parsedTotal = Object.values(dataAll.total || {}).reduce(
+            (s, v) => (typeof v === 'number' ? s + v : s),
+            0
+          );
           if (parsedTotal > 0) total = parsedTotal.toLocaleString();
           const year = new Date().getFullYear().toString();
           if (dataAll.total?.[year]) commits = `${dataAll.total[year]}`;
@@ -286,6 +289,7 @@ const DeveloperActivity = () => {
               <ExternalLink size={12} aria-hidden="true" />
             </a>
           </div>
+          <p className="dsa-lang-note">Java for DSA &amp; algorithm practice · JavaScript for production projects</p>
         </div>
       </div>
     </section>

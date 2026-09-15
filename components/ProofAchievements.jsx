@@ -1,26 +1,32 @@
 import React from 'react';
-import { Trophy, Code2, Brain, GraduationCap } from 'lucide-react';
+import { Trophy, Code2, Brain, GitFork, Briefcase } from 'lucide-react';
 import { proofAchievements } from '../data/portfolio';
 
 const getIcon = (type) => {
   switch (type) {
     case 'trophy':
-      return <Trophy size={17} aria-hidden="true" />;
+      return <Briefcase size={18} aria-hidden="true" />;
     case 'code':
-      return <Code2 size={17} aria-hidden="true" />;
+      return <Code2 size={18} aria-hidden="true" />;
     case 'brain':
-      return <Brain size={17} aria-hidden="true" />;
-    case 'graduation':
-      return <GraduationCap size={17} aria-hidden="true" />;
+      return <Brain size={18} aria-hidden="true" />;
+    case 'git':
+      return <GitFork size={18} aria-hidden="true" />;
     default:
-      return <Trophy size={17} aria-hidden="true" />;
+      return <Trophy size={18} aria-hidden="true" />;
   }
 };
 
 const ProofAchievements = () => {
   return (
     <section className="section" id="achievements" aria-label="Key Highlights and Achievements">
-      <h2 className="section-title">Key Highlights & Achievements</h2>
+      <div className="section-header-wrap">
+        <h2 className="section-title">Key Highlights & Proof</h2>
+        <p className="section-subtitle">
+          Tangible engineering outcomes across competition, deployed applications, algorithms, and open source.
+        </p>
+      </div>
+
       <div className="proof-grid">
         {proofAchievements.map((item, idx) => (
           <div key={idx} className="proof-card">

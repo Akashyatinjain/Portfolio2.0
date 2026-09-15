@@ -17,13 +17,14 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata = {
   metadataBase: new URL('https://akash-jain.vercel.app'),
-  title: 'Akash Yatin Jain — Full-Stack Developer',
+  title: 'Akash Jain — Full-Stack Developer & Freelancer',
   description:
-    'Akash Yatin Jain — Full-Stack Developer & IT undergraduate at SFIT, Mumbai. Building scalable web apps with React, Node.js, PostgreSQL, and Docker. Open to software engineering internships.',
+    'Akash Jain — Full-Stack Developer & Freelancer. B.Tech IT student building production-ready web applications and digital products.',
   keywords: [
     'Akash Jain',
     'Akash Yatin Jain',
     'Full Stack Developer',
+    'Freelance Web Developer',
     'Software Engineer',
     'React Developer',
     'Node.js',
@@ -45,23 +46,23 @@ export const metadata = {
   openGraph: {
     type: 'website',
     url: 'https://akash-jain.vercel.app/',
-    title: 'Akash Yatin Jain — Full-Stack Developer',
+    title: 'Akash Jain — Full-Stack Developer & Freelancer',
     description:
-      'Full-Stack Developer building scalable web applications with React, Express, PostgreSQL, and Docker. Open to software engineering internships.',
+      'Akash Jain — Full-Stack Developer & Freelancer. B.Tech IT student building production-ready web applications and digital products.',
     images: [
       {
         url: '/avatar.png',
         width: 800,
         height: 800,
-        alt: 'Akash Yatin Jain',
+        alt: 'Akash Jain — Full-Stack Developer & Freelancer',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Akash Yatin Jain — Full-Stack Developer',
+    title: 'Akash Jain — Full-Stack Developer & Freelancer',
     description:
-      'Full-Stack Developer building scalable web applications with React, Express, PostgreSQL, and Docker. Open to software engineering internships.',
+      'Akash Jain — Full-Stack Developer & Freelancer. B.Tech IT student building production-ready web applications and digital products.',
     images: ['/avatar.png'],
   },
 };

@@ -1,13 +1,27 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, Copy, Check, Send } from 'lucide-react';
+import { Mail, Copy, Check, Send, Sparkles } from 'lucide-react';
+import { Github, Linkedin } from './Icons';
 import { profile } from '../data/portfolio';
 import confetti from 'canvas-confetti';
 
+const topicOptions = [
+  'Software Engineering Opportunity',
+  'Freelance Project',
+  'Collaboration',
+  'Open Source',
+  'Other',
+];
+
 const Contact = () => {
   const [copied, setCopied] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    topic: 'Software Engineering Opportunity',
+    message: '',
+  });
   const [status, setStatus] = useState(null);
 
   const handleCopy = () => {
@@ -31,8 +45,8 @@ const Contact = () => {
       setTimeout(() => {
         setStatus('success');
         confetti({ particleCount: 40, spread: 50, origin: { y: 0.85 } });
-        setFormData({ name: '', email: '', message: '' });
-        setTimeout(() => setStatus(null), 3500);
+        setFormData({ name: '', email: '', topic: 'Software Engineering Opportunity', message: '' });
+        setTimeout(() => setStatus(null), 4000);
       }, 700);
       return;
     }
@@ -43,41 +57,55 @@ const Contact = () => {
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           access_key: accessKey,
-          ...formData,
-          from_name: 'Portfolio Contact',
+          name: formData.name,
+          email: formData.email,
+          topic: formData.topic,
+          subject: `[Portfolio Inquiry] ${formData.topic} from ${formData.name}`,
+          message: `Inquiry Type: ${formData.topic}\n\nMessage:\n${formData.message}`,
+          from_name: formData.name || 'Portfolio Contact',
         }),
       });
       const result = await res.json();
       if (result.success) {
         setStatus('success');
         confetti({ particleCount: 40, spread: 50, origin: { y: 0.85 } });
-        setFormData({ name: '', email: '', message: '' });
+        setFormData({ name: '', email: '', topic: 'Software Engineering Opportunity', message: '' });
       } else {
         setStatus('error');
       }
-      setTimeout(() => setStatus(null), 3500);
+      setTimeout(() => setStatus(null), 4000);
     } catch {
       setStatus('error');
-      setTimeout(() => setStatus(null), 3500);
+      setTimeout(() => setStatus(null), 4000);
     }
   };
 
   return (
-    <section className="section contact-section" id="contact">
-      <h2 className="section-title">Get in Touch</h2>
-      <div className="contact-card-box">
-        <p className="contact-text">
-          Looking for a software engineering intern? Feel free to reach out via email or send a quick message below.
+    <section className="section contact-section" id="contact" aria-label="Contact and Inquiries">
+      <div className="section-header-wrap">
+        <span className="contact-tag-badge">LET'S BUILD SOMETHING</span>
+        <h2 className="section-title">Get in Touch</h2>
+        <p className="section-subtitle">
+          Have a project in mind, want to discuss an internship opportunity, or simply want to connect? I'd be happy to hear from you.
         </p>
+      </div>
 
-        <div className="contact-buttons-row">
+      <div className="contact-card-box">
+        <div className="contact-meta-banner">
+          <Sparkles size={16} className="contact-sparkle-icon" aria-hidden="true" />
+          <span>Currently open to software engineering internships and selected freelance opportunities.</span>
+        </div>
+
+        <div className="contact-direct-actions">
           <a
             href={`mailto:${profile.email}`}
-            className="btn btn-dark btn-sm"
+            className="btn btn-dark"
+            aria-label={`Send direct email to ${profile.email}`}
           >
             <Mail size={14} aria-hidden="true" />
             Email Me Directly
           </a>
+
           <button
             type="button"
             onClick={handleCopy}
@@ -90,15 +118,45 @@ const Contact = () => {
           </button>
         </div>
 
-        <form className="contact-form" onSubmit={handleSubmit}>
+        <div className="contact-social-quick">
+          <a
+            href={profile.links.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="contact-quick-link"
+            aria-label="Connect with Akash on LinkedIn (opens in new tab)"
+          >
+            <Linkedin size={14} aria-hidden="true" />
+            <span>LinkedIn</span>
+          </a>
+          <span className="contact-dot-sep" aria-hidden="true">·</span>
+          <a
+            href={profile.links.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="contact-quick-link"
+            aria-label="View Akash's GitHub (opens in new tab)"
+          >
+            <Github size={14} aria-hidden="true" />
+            <span>GitHub</span>
+          </a>
+        </div>
+
+        <div className="contact-divider-bar">
+          <span>OR SEND A MESSAGE</span>
+        </div>
+
+        <form className="contact-form" onSubmit={handleSubmit} noValidate={false}>
           <div className="contact-form-row">
             <div className="form-field">
-              <label htmlFor="contact-name" className="form-label">Name</label>
+              <label htmlFor="contact-name" className="form-label">
+                Your Name <span className="req-star">*</span>
+              </label>
               <input
                 id="contact-name"
                 type="text"
                 name="name"
-                placeholder="Your Name"
+                placeholder="e.g. Alex Smith"
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -106,13 +164,16 @@ const Contact = () => {
                 autoComplete="name"
               />
             </div>
+
             <div className="form-field">
-              <label htmlFor="contact-email" className="form-label">Email</label>
+              <label htmlFor="contact-email" className="form-label">
+                Your Email <span className="req-star">*</span>
+              </label>
               <input
                 id="contact-email"
                 type="email"
                 name="email"
-                placeholder="Your Email"
+                placeholder="e.g. alex@company.com"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -121,22 +182,45 @@ const Contact = () => {
               />
             </div>
           </div>
+
           <div className="form-field">
-            <label htmlFor="contact-message" className="form-label">Message</label>
+            <label htmlFor="contact-topic" className="form-label">
+              What are you reaching out about?
+            </label>
+            <select
+              id="contact-topic"
+              name="topic"
+              value={formData.topic}
+              onChange={handleChange}
+              className="form-select"
+            >
+              {topicOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="contact-message" className="form-label">
+              Message <span className="req-star">*</span>
+            </label>
             <textarea
               id="contact-message"
               name="message"
-              placeholder="Your message..."
-              rows={3}
+              placeholder="Briefly describe your project, timeline, or open role..."
+              rows={4}
               value={formData.message}
               onChange={handleChange}
               required
               className="form-textarea"
             />
           </div>
+
           <button
             type="submit"
-            className="btn btn-outline btn-sm contact-submit-btn"
+            className="btn btn-dark contact-submit-btn"
             disabled={status === 'sending'}
           >
             <Send size={13} aria-hidden="true" />
@@ -144,14 +228,15 @@ const Contact = () => {
           </button>
 
           {status === 'success' && (
-            <span className="contact-toast-msg" role="status">
-              Message sent! I'll get back to you as soon as possible.
-            </span>
+            <div className="contact-toast-msg contact-toast-success" role="status">
+              <Check size={14} aria-hidden="true" />
+              <span>Message sent successfully! I'll get back to you shortly.</span>
+            </div>
           )}
           {status === 'error' && (
-            <span className="contact-toast-msg contact-toast-error" role="alert">
-              Could not send message. Please click "Email Me Directly".
-            </span>
+            <div className="contact-toast-msg contact-toast-error" role="alert">
+              <span>Could not send message. Please reach out directly at {profile.email}</span>
+            </div>
           )}
         </form>
       </div>

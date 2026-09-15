@@ -1,37 +1,47 @@
 import React from 'react';
+import { Briefcase, Users, Trophy } from 'lucide-react';
 import { experience } from '../data/portfolio';
 
-const getInitials = (name) => {
-  if (!name) return 'EX';
-  if (name.includes('IEEE')) return 'IEEE';
-  const parts = name.split(' ');
-  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`;
-  return name.slice(0, 2).toUpperCase();
+const getExperienceIcon = (role) => {
+  if (role.toLowerCase().includes('freelance')) return <Briefcase size={16} aria-hidden="true" />;
+  if (role.toLowerCase().includes('ieee') || role.toLowerCase().includes('executive')) return <Users size={16} aria-hidden="true" />;
+  if (role.toLowerCase().includes('hackathon') || role.toLowerCase().includes('runner-up')) return <Trophy size={16} aria-hidden="true" />;
+  return <Briefcase size={16} aria-hidden="true" />;
 };
 
 const Experience = () => {
   return (
-    <section className="section" id="experience" aria-label="Experience & Leadership">
-      <h2 className="section-title">Experience & Leadership</h2>
+    <section className="section" id="experience" aria-label="Experience and Leadership">
+      <div className="section-header-wrap">
+        <h2 className="section-title">Experience & Leadership</h2>
+        <p className="section-subtitle">
+          Professional freelance client delivery, technical student leadership, and competitive hackathon execution.
+        </p>
+      </div>
+
       <div className="experience-list">
         {experience.map((item, index) => (
           <article key={index} className="experience-item">
-            <div className="experience-logo" aria-hidden="true">
-              {getInitials(item.organization)}
+            <div className="experience-logo-box" aria-hidden="true">
+              {getExperienceIcon(item.role)}
             </div>
             <div className="experience-details">
               <div className="experience-header">
-                <h3 className="experience-org">{item.organization}</h3>
-                <time className="experience-period">{item.period}</time>
+                <div className="experience-title-wrap">
+                  <h3 className="experience-role-title">{item.role}</h3>
+                  <span className="experience-org-name">{item.organization}</span>
+                </div>
+                <time className="experience-period-badge">{item.period}</time>
               </div>
-              <div className="experience-role">{item.role}</div>
-              {item.description && (
-                <p className="experience-desc">{item.description}</p>
-              )}
+
+              {item.description && <p className="experience-desc">{item.description}</p>}
+
               {item.tags && (
                 <div className="experience-tags">
                   {item.tags.map((tag) => (
-                    <span key={tag} className="exp-tag">{tag}</span>
+                    <span key={tag} className="exp-tag">
+                      {tag}
+                    </span>
                   ))}
                 </div>
               )}

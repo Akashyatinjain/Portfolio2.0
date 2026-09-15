@@ -3,40 +3,53 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, FolderGit2, FileText, Sun, Moon } from 'lucide-react';
-import { Github, Linkedin, Leetcode } from './Icons';
+import { Home, FolderGit2, User, Briefcase, Mail, FileText, Sun, Moon } from 'lucide-react';
+import { Github, Linkedin } from './Icons';
 import { profile } from '../data/portfolio';
 
 const FloatingDock = ({ theme, toggleTheme }) => {
   const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(true);
+  const [activeSection, setActiveSection] = useState('home');
   const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
-      // If at or near top of the page, keep it visible
-      if (currentScrollY < 40) {
+
+      if (currentScrollY < 50) {
         setIsVisible(true);
+        setActiveSection('home');
         lastScrollY.current = currentScrollY;
         return;
       }
 
-      // If user reaches near the bottom of the page, show it
-      const isBottom = window.innerHeight + currentScrollY >= document.documentElement.scrollHeight - 50;
+      // Check which section is in view on the home page
+      if (pathname === '/') {
+        const sections = ['contact', 'experience', 'about', 'projects'];
+        for (const secId of sections) {
+          const el = document.getElementById(secId);
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= window.innerHeight * 0.45) {
+              setActiveSection(secId);
+              break;
+            }
+          }
+        }
+      }
+
+      const isBottom = window.innerHeight + currentScrollY >= document.documentElement.scrollHeight - 60;
       if (isBottom) {
         setIsVisible(true);
         lastScrollY.current = currentScrollY;
         return;
       }
 
-      // Scrolling down -> hide dock to avoid covering content
-      if (currentScrollY > lastScrollY.current + 8) {
+      // Scroll up/down logic
+      if (currentScrollY > lastScrollY.current + 10) {
         setIsVisible(false);
-      } 
-      // Scrolling up -> reveal dock for navigation
-      else if (currentScrollY < lastScrollY.current - 8) {
+      } else if (currentScrollY < lastScrollY.current - 10) {
         setIsVisible(true);
       }
 
@@ -45,88 +58,113 @@ const FloatingDock = ({ theme, toggleTheme }) => {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [pathname]);
+
+  const isHome = pathname === '/';
 
   return (
     <nav
       className={`floating-dock-container ${isVisible ? 'dock-visible' : 'dock-hidden'}`}
-      aria-label="Floating Quick Navigation"
+      aria-label="Quick site navigation and links"
     >
-      <Link
-        href="/"
-        className={`dock-item ${pathname === '/' ? 'active' : ''}`}
-        aria-label="Home"
-      >
-        <Home size={18} />
-        <span className="dock-tooltip">Home</span>
-      </Link>
+      <div className="dock-nav-group" role="menubar">
+        <Link
+          href="/"
+          className={`dock-item ${isHome && activeSection === 'home' ? 'active' : ''}`}
+          aria-label="Home section"
+          role="menuitem"
+        >
+          <Home size={17} aria-hidden="true" />
+          <span className="dock-tooltip">Home</span>
+        </Link>
 
-      <Link
-        href="/projects"
-        className={`dock-item ${pathname === '/projects' ? 'active' : ''}`}
-        aria-label="Projects"
-      >
-        <FolderGit2 size={18} />
-        <span className="dock-tooltip">Projects</span>
-      </Link>
+        <a
+          href={isHome ? '#projects' : '/#projects'}
+          className={`dock-item ${isHome && activeSection === 'projects' ? 'active' : ''}`}
+          aria-label="Featured Projects section"
+          role="menuitem"
+        >
+          <FolderGit2 size={17} aria-hidden="true" />
+          <span className="dock-tooltip">Projects</span>
+        </a>
 
-      <a
-        href="/resume/Resume.pdf?v=latest"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="dock-item"
-        aria-label="Resume"
-      >
-        <FileText size={18} />
-        <span className="dock-tooltip">Resume</span>
-      </a>
+        <a
+          href={isHome ? '#about' : '/#about'}
+          className={`dock-item ${isHome && activeSection === 'about' ? 'active' : ''}`}
+          aria-label="About section"
+          role="menuitem"
+        >
+          <User size={17} aria-hidden="true" />
+          <span className="dock-tooltip">About</span>
+        </a>
 
-      <div className="dock-divider" />
+        <a
+          href={isHome ? '#experience' : '/#experience'}
+          className={`dock-item ${isHome && activeSection === 'experience' ? 'active' : ''}`}
+          aria-label="Experience & Leadership section"
+          role="menuitem"
+        >
+          <Briefcase size={17} aria-hidden="true" />
+          <span className="dock-tooltip">Experience</span>
+        </a>
 
-      <a
-        href={profile.links.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="dock-item"
-        aria-label="GitHub"
-      >
-        <Github size={18} />
-        <span className="dock-tooltip">GitHub</span>
-      </a>
+        <a
+          href={isHome ? '#contact' : '/#contact'}
+          className={`dock-item ${isHome && activeSection === 'contact' ? 'active' : ''}`}
+          aria-label="Contact section"
+          role="menuitem"
+        >
+          <Mail size={17} aria-hidden="true" />
+          <span className="dock-tooltip">Contact</span>
+        </a>
+      </div>
 
-      <a
-        href={profile.links.linkedin}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="dock-item"
-        aria-label="LinkedIn"
-      >
-        <Linkedin size={18} />
-        <span className="dock-tooltip">LinkedIn</span>
-      </a>
+      <div className="dock-divider" aria-hidden="true" />
 
-      <a
-        href={profile.links.leetcode}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="dock-item"
-        aria-label="LeetCode"
-      >
-        <Leetcode size={18} />
-        <span className="dock-tooltip">LeetCode</span>
-      </a>
+      <div className="dock-actions-group">
+        <a
+          href="/resume/Resume.pdf?v=latest"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="dock-item"
+          aria-label="Download Resume PDF (opens in new tab)"
+        >
+          <FileText size={17} aria-hidden="true" />
+          <span className="dock-tooltip">Resume</span>
+        </a>
 
-      <div className="dock-divider" />
+        <a
+          href={profile.links.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="dock-item dock-external-item"
+          aria-label="GitHub profile (opens in new tab)"
+        >
+          <Github size={17} aria-hidden="true" />
+          <span className="dock-tooltip">GitHub</span>
+        </a>
 
-      <button
-        type="button"
-        onClick={toggleTheme}
-        className="dock-item"
-        aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-      >
-        {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-        <span className="dock-tooltip">{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
-      </button>
+        <a
+          href={profile.links.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="dock-item dock-external-item"
+          aria-label="LinkedIn profile (opens in new tab)"
+        >
+          <Linkedin size={17} aria-hidden="true" />
+          <span className="dock-tooltip">LinkedIn</span>
+        </a>
+
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="dock-item theme-toggle-btn"
+          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+        >
+          {theme === 'light' ? <Moon size={17} aria-hidden="true" /> : <Sun size={17} aria-hidden="true" />}
+          <span className="dock-tooltip">{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+        </button>
+      </div>
     </nav>
   );
 };

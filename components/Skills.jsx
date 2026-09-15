@@ -1,44 +1,30 @@
 import React from 'react';
-import { Cloud, Code2, Database, Rocket, ShieldCheck } from 'lucide-react';
+import { Code, Layout, Server, Database, ShieldCheck, Cloud, Wrench } from 'lucide-react';
 import { skillTiers } from '../data/portfolio';
 
-const skillSections = [
-  {
-    key: 'coreStack',
-    title: 'Core Full-Stack',
-    badge: 'Primary Stack',
-    icon: Rocket,
-    featured: true,
-  },
-  {
-    key: 'databasesAndOrm',
-    title: 'Databases & ORM',
-    icon: Database,
-  },
-  {
-    key: 'devopsAndCloud',
-    title: 'Deployment & DevOps',
-    icon: Cloud,
-  },
-  {
-    key: 'languagesAndDsa',
-    title: 'Languages & DSA',
-    icon: Code2,
-  },
-  {
-    key: 'securityAndTools',
-    title: 'Security & Ecosystem',
-    icon: ShieldCheck,
-  },
+const categories = [
+  { key: 'languages', title: 'Languages', icon: Code },
+  { key: 'frontend', title: 'Frontend', icon: Layout },
+  { key: 'backend', title: 'Backend', icon: Server },
+  { key: 'databasesAndOrm', title: 'Databases & ORM', icon: Database },
+  { key: 'authAndSecurity', title: 'Authentication & Security', icon: ShieldCheck },
+  { key: 'devopsAndDeployment', title: 'DevOps & Deployment', icon: Cloud },
+  { key: 'tools', title: 'Tools & Platforms', icon: Wrench },
 ];
 
 const Skills = () => {
   return (
-    <section className="section" id="skills">
-      <h2 className="section-title">Technical Skills & Proficiency</h2>
+    <section className="section" id="skills" aria-label="Technical Skills">
+      <div className="section-header-wrap">
+        <h2 className="section-title">Technical Skills</h2>
+        <p className="section-subtitle">
+          Technologies, runtimes, and engineering tools applied across production applications and client deliverables.
+        </p>
+      </div>
+
       <div className="skills-grid-layout">
-        {skillSections.map(({ key, title, badge, icon: Icon, featured }) => (
-          <div key={key} className={`skill-tier-card ${featured ? 'primary-stack' : ''}`}>
+        {categories.map(({ key, title, icon: Icon }) => (
+          <div key={key} className="skill-tier-card">
             <div className="skill-tier-header">
               <span className="skill-tier-title">
                 <span className="skill-tier-icon" aria-hidden="true">
@@ -46,10 +32,9 @@ const Skills = () => {
                 </span>
                 {title}
               </span>
-              {badge && <span className="skill-tier-badge">{badge}</span>}
             </div>
             <div className="skill-pills-wrap">
-              {skillTiers[key].map((item) => (
+              {(skillTiers[key] || []).map((item) => (
                 <span key={item} className="skill-pill-item">
                   {item}
                 </span>
